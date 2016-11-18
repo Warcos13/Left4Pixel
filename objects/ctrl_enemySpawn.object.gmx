@@ -50,7 +50,16 @@ alarm[0] = spawnRate;
           <argument>
             <kind>1</kind>
             <string>if(global.zombiesCount &lt; 20){
-    instance_create(random_range(32,view_wview-32),random_range(32,view_hview-32),obj_enemy);
+    enemyId = instance_create(0,0,obj_enemy);
+    do{
+        enemyId.x = random(room_width);
+        enemyId.y = random(room_height);            
+    
+        with(enemyId){
+            collision = place_meeting(x,y,obj_wall);
+        }
+    }
+    until enemyId.collision=0;
     global.zombiesCount++;
 }
 alarm[0] = spawnRate;;
