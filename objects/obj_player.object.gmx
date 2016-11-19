@@ -25,15 +25,13 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///SETTTINGS
-hp = 100;
-firing = false;
-walkingSpeed = 3;
-rateOfFire = 12;
-
-//Weapon
-
-
+            <string>///Initialize the Player
+dir = 0;
+hspd = 0;
+spd = 4;
+shoot_delay = 6;
+vari = 2;
+alarm[0]=0;
 </string>
           </argument>
         </arguments>
@@ -56,9 +54,7 @@ rateOfFire = 12;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>
-firing = false;
-
+            <string>///Bullet Delay Alarm
 </string>
           </argument>
         </arguments>
@@ -81,44 +77,39 @@ firing = false;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>//PlayerMovement
-hspeed = walkingSpeed * (keyboard_check(ord("D")) - keyboard_check(ord("A")));
-vspeed = walkingSpeed * (keyboard_check(ord("S")) - keyboard_check(ord("W")));
+            <string>/// Move player
+hspd = keyboard_check(ord('D'))-keyboard_check(ord('A'));
+vspd = keyboard_check(ord('S'))-keyboard_check(ord('W'));
+dir = point_direction(x,y,mouse_x,mouse_y);
+fire = (mouse_check_button_pressed(mb_left)&amp;&amp;alarm[0]&lt;=0);
 
-//COllision
-if(hspeed!=0){
-    if!place_free(x+hspeed,y){
-        if(hspeed&gt;0){move_contact_solid(0,hspeed);}
-        if(hspeed&lt;0){move_contact_solid(180,-hspeed);}
-        hspeed=0;
+if(!place_meeting(x+hspd*spd,y,obj_wall)){
+    x+=hspd*spd;
+}
+if(!place_meeting(x,y+vspd*spd,obj_wall)){
+    y+=vspd*spd;
+}
+
+if (fire){
+    //Reset Alarm
+    alarm[0] = shoot_delay;
+    
+    //FInd Target
+    var temp_dir = dir +random_range(-vari,vari);
+    var temp_x = x+lengthdir_x(35,temp_dir);
+    var temp_y = y+lengthdir_y(35,temp_dir);
+    var start_x = temp_x;
+    var start_y = temp_y;
+    var collition = (position_meeting(temp_x,temp_y,obj_wall) || position_meeting(temp_x,temp_y,obj_enemy))     
+    while(!collition &amp;&amp; distance_to_point(temp_x,temp_y) &lt; 800){
+        temp_x += lengthdir_x(4,temp_dir);
+        temp_y += lengthdir_y(4,temp_dir);
+        collition = (position_meeting(temp_x,temp_y,obj_wall) || position_meeting(temp_x,temp_y,obj_enemy))        
     }
+    var shoot = instance_create(temp_x,temp_y,obj_shoot);
+    shoot.start_x = start_x;
+    shoot.start_y = start_y;   
 }
-
-if(vspeed!=0){
-    if!place_free(x,y+vspeed){
-        if(vspeed&gt;0){move_contact_solid(270,vspeed);}
-        if(vspeed&lt;0){move_contact_solid(90,-vspeed);}
-        vspeed=0;
-    }
-}
-
-//PlayerDead
-image_alpha=hp/100;
-
-if(hp&lt;=0){
-    game_end();
-}
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -131,7 +122,7 @@ if(hp&lt;=0){
         </arguments>
       </action>
     </event>
-    <event eventtype="6" enumb="50">
+    <event eventtype="8" enumb="0">
       <action>
         <libid>1</libid>
         <id>603</id>
@@ -148,13 +139,10 @@ if(hp&lt;=0){
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if(!firing){
-    firing = true;
-    alarm[0]=rateOfFire;
-    instance_create(x,y,obj_bullet);
-}
+            <string>/// Draw the player gun
 
-
+draw_self();
+draw_sprite_ext(spr_gun,0,x,y,1,1,dir, c_white,1);
 </string>
           </argument>
         </arguments>

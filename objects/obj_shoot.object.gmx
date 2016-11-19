@@ -61,7 +61,7 @@ start_y=0;
         </arguments>
       </action>
     </event>
-    <event eventtype="4" ename="obj_target">
+    <event eventtype="4" ename="obj_enemy">
       <action>
         <libid>1</libid>
         <id>603</id>
@@ -81,7 +81,7 @@ start_y=0;
             <string>/// destroy target
 
 with(other){
-    instance_destroy();
+    hp-=5;
 }
 </string>
           </argument>
