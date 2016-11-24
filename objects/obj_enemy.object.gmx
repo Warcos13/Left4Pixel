@@ -30,7 +30,7 @@
 alerted=false;
 hp = 100;
 enemySpeed = 2;
-aggroRange = 240;
+aggroRange = 500;
 
 </string>
           </argument>
